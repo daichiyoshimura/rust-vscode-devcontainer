@@ -1,0 +1,27 @@
+{
+	"service": "dev",
+	"dockerComposeFile": "../../docker-compose.yml",
+	"workspaceFolder": "/rust/src/dev",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"donjayamanne.githistory",
+				"redhat.vscode-yaml",
+				"eamodio.gitlens",
+				"felipecaputo.git-project-manager",
+				"MS-CEINTL.vscode-language-pack-ja",
+                "rust-lang.rust",
+                "bungcip.better-toml",
+                "vadimcn.vscode-lldb",
+                "mutantdino.resourcemonitor",
+                "ms-azuretools.vscode-docker"
+			],
+			"settings": {
+				"terminal.integrated.shell.linux": "/bin/zsh",
+                "files.watcherExclude": {
+                    "**/target/**": true
+                  }
+			}
+		}
+	}
+}

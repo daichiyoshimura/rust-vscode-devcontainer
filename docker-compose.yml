@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  dev:
+    build: 
+      context: ./dev
+      args:
+        GITCONFIG_EMAIL: ${GITCONFIG_EMAIL}
+        GITCONFIG_NAME: ${GITCONFIG_NAME}
+        APP_NAME: ${APP_NAME}
+    ports:
+      - 6379:80
+    tty: true
+    restart: unless-stopped
+  mysql:
+    image: mysql:latest
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    restart: unless-stopped
