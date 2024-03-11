@@ -4,64 +4,48 @@ ARG GITCONFIG_EMAIL
 ARG GITCONFIG_NAME
 ARG APP_NAME
 
-RUN sudo apt-get update & apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 
-# time *********************************************
-RUN apt-get install tzdata && \
+# タイムゾーンを設定
+RUN apt-get install -y tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
-# **************************************************
 
-# git、git-prompt、git-zsh-completion をインストールする
-RUN apt-get update && apt-get install -y git
+# git、zshをインストールし、Oh My Zshをセットアップ
+RUN apt-get install -y git zsh && \
+    git clone --depth 1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh && \
+    cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc && \
+    sed -i 's/robbyrussell/agnoster/' ~/.zshrc && \
+    git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions && \
+    git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/plugins/zsh-syntax-highlighting && \
+    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc && \
+    chsh -s /bin/zsh
 
-# git-prompt および git-zsh-completion を追加する
-RUN apt-get update && apt-get install -y \
-    zsh \
-    && git clone --depth 1 https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
-    && cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
-    && sed -i 's/robbyrussell/agnoster/' ~/.zshrc \
-    && echo "source /usr/share/git/completion/git-prompt.sh" >> ~/.zshrc \
-    && echo "source /usr/share/git/completion/git-completion.zsh" >> ~/.zshrc \
-    && rm -rf ~/.oh-my-zsh/plugins/git \
-    && git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions \
-    && git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/plugins/zsh-syntax-highlighting \
-    && sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' ~/.zshrc \
-    && chsh -s /bin/zsh
-
+# Gitのユーザー情報を設定
 RUN git config --global user.email ${GITCONFIG_EMAIL} && \
     git config --global user.name ${GITCONFIG_NAME}
 
+# デフォルトのエントリーポイントをzshに設定
 ENTRYPOINT /bin/zsh
-# **************************************************
 
-# https ********************************************
-# 必要なパッケージをインストールする
+# 必要なパッケージをインストール
 RUN apt-get update && apt-get install -y \
     ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* && \
+    update-ca-certificates && \
+    export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt && \
+    export SSL_CERT_DIR=/etc/ssl/certs
 
-# ca-certificates を更新する
-RUN update-ca-certificates
-ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-ENV SSL_CERT_DIR=/etc/ssl/certs
-# **************************************************
+# その他の依存パッケージをインストール
+RUN apt-get update && apt-get install -y vim curl make wget
 
-# the others ...
-RUN apt-get update && apt-get install -y vim curl make
+# Gitの補完スクリプトをダウンロードしてコピー
+RUN wget https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh -O ~/.git-completion.zsh
 
-# rust ************************************************
-# it makes faster cargo build
+# rust関連の設定
 ENV CARGO_BUILD_TARGET_DIR=/tmp/target
-
-# target runtime
-RUN rustup target add x86_64-unknown-linux-gnu
-
-# linter and formatter
-RUN rustup component add clippy
-RUN rustup component add rustfmt
-
-# for VS Code Remote Container
-RUN rustup component add rust-analysis
-RUN rustup component add rust-src
-RUN rustup component add rls
-# ***************************************************
+RUN rustup target add x86_64-unknown-linux-gnu && \
+    rustup component add clippy && \
+    rustup component add rustfmt && \
+    rustup component add rust-analysis && \
+    rustup component add rust-src && \
+    rustup component add rls
