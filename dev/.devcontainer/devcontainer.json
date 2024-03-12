@@ -1,7 +1,7 @@
 {
-	"service": "dev",
+	"service": "rust",
 	"dockerComposeFile": "../../docker-compose.yml",
-	"workspaceFolder": "/rust/src/dev",
+	"workspaceFolder": "/rust/src/app",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -10,17 +10,19 @@
 				"eamodio.gitlens",
 				"felipecaputo.git-project-manager",
 				"MS-CEINTL.vscode-language-pack-ja",
-                "rust-lang.rust",
-                "bungcip.better-toml",
-                "vadimcn.vscode-lldb",
-                "mutantdino.resourcemonitor",
-                "ms-azuretools.vscode-docker"
+				"bungcip.better-toml",
+				"vadimcn.vscode-lldb",
+				"mutantdino.resourcemonitor",
+				"ms-azuretools.vscode-docker",
+				"rust-lang.rust-analyzer",
+				"serayuzgur.crates",
+				"njpwerner.autodocstring"
 			],
 			"settings": {
 				"terminal.integrated.shell.linux": "/bin/zsh",
-                "files.watcherExclude": {
-                    "**/target/**": true
-                  }
+				"files.watcherExclude": {
+					"**/target/**": true
+				}
 			}
 		}
 	}
