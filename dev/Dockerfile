@@ -7,9 +7,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# .gitconfig
-COPY .gitconfig /root/.gitconfig
-
 # Set timezone to Asia/Tokyo
 RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
