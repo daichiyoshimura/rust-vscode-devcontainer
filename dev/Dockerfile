@@ -14,7 +14,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 RUN sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 
 # Set working directory
-WORKDIR /rust/src/app
+WORKDIR /usr/src/app
 
 # Install Rust tools
 RUN rustup target add x86_64-unknown-linux-gnu && \
